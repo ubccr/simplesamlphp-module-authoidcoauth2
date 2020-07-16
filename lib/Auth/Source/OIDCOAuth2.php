@@ -9,7 +9,7 @@ require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/oauth/lib
  * @package SimpleSAMLphp
  */
 
-class sspmod_authoidcoath2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Source
+class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Source
 {
     /**
      * The string used to identify our states.
