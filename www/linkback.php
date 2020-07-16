@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handle linkback() response from Globus.
+ * Handle linkback() response from IdP.
  */
 if (!array_key_exists('state', $_REQUEST) || empty($_REQUEST['state'])) {
-    throw new SimpleSAML_Error_BadRequest('Lost state for Globus endpoint.');
+    throw new SimpleSAML_Error_BadRequest('Lost state for OIDCOAuth2 endpoint.');
 }
 $state = SimpleSAML_Auth_State::loadState($_REQUEST['state'], sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2::STAGE_INIT);
 
@@ -23,7 +23,7 @@ try {
 } catch (SimpleSAML_Error_Exception $e) {
     SimpleSAML_Auth_State::throwException($state, $e);
 } catch (Exception $e) {
-    SimpleSAML_Auth_State::throwException($state, new SimpleSAML_Error_AuthSource($sourceId, 'Error on globus linkback endpoint.', $e));
+    SimpleSAML_Auth_State::throwException($state, new SimpleSAML_Error_AuthSource($sourceId, 'Error on OIDCOAuth2 linkback endpoint.', $e));
 }
 
 SimpleSAML_Auth_Source::completeAuth($state);

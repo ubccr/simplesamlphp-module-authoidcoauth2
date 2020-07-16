@@ -8,7 +8,6 @@ require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/oauth/lib
  *
  * @package SimpleSAMLphp
  */
-
 class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Source
 {
     /**
@@ -49,8 +48,8 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
         $this->scope = $config['scope'];
         $this->responseType = $config['response_type'];
         $this->redirectUri= $config['redirect_uri'];
-        $thos->verifySSL = array_key_exists('verify_ssl', $config) ? $config['verify_ssl'] : true;
-        $thos->isAuthInHeader = array_key_exists('use_header_for_auth', $config) ? $config['use_header_for_auth'] : true;
+        $this->verifySSL = array_key_exists('verify_ssl', $config) ? $config['verify_ssl'] : 2;
+        $this->isAuthInHeader = array_key_exists('use_header_for_auth', $config) ? $config['use_header_for_auth'] : true;
         $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_USERAGENT, 'SSPHP OIDC/OAuth2');
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
@@ -131,7 +130,6 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
      */
     public function authenticate(&$state)
     {
-
         // We are going to need the authId in order to retrieve this authentication source later
         $state[self::AUTHID] = $this->authId;
 
@@ -160,15 +158,16 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
         $request = array(
             'code' => $_GET['code'],
             'redirect_uri' => $this->redirectUri,
-            'grant_type' => 'authorization_code',
-            'client_id' => $this->key,
-            'client_secret' => $this->secret
+            'grant_type' => 'authorization_code'
         );
-
+        if (!$this->isAuthInHeader) {
+            $request['client_id'] = $this->key;
+            $request['client_secret'] = $this->secret;
+        }
         // Exchange the code we got earlier for an access token
-        $result = $this->doCurlRequest('/token', true, null, null, $request, 'POST');
+        $result = $this->doCurlRequest('/token', $this->isAuthInHeader, null, null, $request, 'POST');
         // Use this access token to tell us about our current user + affiliations
-        $userInfo = $this->doCurlRequest('/userinfo', true, $result->access_token);
+        $userInfo = $this->doCurlRequest('/userinfo', $this->isAuthInHeader, $result->access_token);
         foreach($userInfo as $key => $value){
             $state['Attributes'][$key] = array($value);
         }
