@@ -27,5 +27,10 @@
     "require-dev": {
         "squizlabs/php_codesniffer": "2.8.0",
         "simplesamlphp/simplesamlphp": "^1.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\authoidcoauth2\\": "lib/"
+        }
     }
 }
