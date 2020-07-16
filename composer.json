@@ -1,5 +1,5 @@
 {
-    "name": "ubccr/simplesamlphp-module-authglobus",
+    "name": "ubccr/simplesamlphp-module-authoidcoauth2",
     "description": "Oauth2 / OIDC auth module for SimpleSAMLphp.",
     "version": "1.0.0",
     "type": "simplesamlphp-module",
