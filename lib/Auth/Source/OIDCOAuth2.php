@@ -54,7 +54,7 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
         curl_setopt($this->curl, CURLOPT_USERAGENT, 'SSPHP OIDC/OAuth2');
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, $this->veryifySSL);
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, $this->$verifySSL);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, 2);
         curl_setopt($this->curl, CURLINFO_HEADER_OUT, true);
     }
