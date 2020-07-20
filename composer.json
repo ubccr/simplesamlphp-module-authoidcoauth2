@@ -1,7 +1,7 @@
 {
     "name": "ubccr/simplesamlphp-module-authoidcoauth2",
     "description": "Oauth2 / OIDC auth module for SimpleSAMLphp.",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "type": "simplesamlphp-module",
     "license": "LGPL-3.0",
     "authors": [
