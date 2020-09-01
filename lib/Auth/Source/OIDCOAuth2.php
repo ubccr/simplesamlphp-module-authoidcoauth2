@@ -43,6 +43,9 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
         parent::__construct($info, $config);
         $this->apiEndpoint = $config['api_endpoint'];
         $this->authEndpoint = array_key_exists('auth_endpoint', $config) ? $config['auth_endpoint'] : $config['api_endpoint'];
+        $this->authPath = array_key_exists('auth_path', $config) ? $config['auth_path'] : '/auth';
+        $this->tokenPath = array_key_exists('token_path', $config) ? $config['token_path'] : '/token';
+        $this->userInfoPath = array_key_exists('user_info_path', $config) ? $config['user_info_path'] : '/userinfo';
         $this->key = $config['key'];
         $this->secret = $config['secret'];
         $this->scope = $config['scope'];
@@ -55,7 +58,7 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, $this->verifySSL);
-        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, 2);
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, $this->verifySSL);
         curl_setopt($this->curl, CURLINFO_HEADER_OUT, true);
     }
 
@@ -142,7 +145,7 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
             'redirect_uri' => $this->redirectUri
         );
         $state['oidcoauth2:request'] = $request;
-        $urlAppend = \SimpleSAML\Utils\HTTP::addURLParameters($this->authEndpoint . '/auth', $request);
+        $urlAppend = \SimpleSAML\Utils\HTTP::addURLParameters($this->authEndpoint . $this->authPath, $request);
         SimpleSAML_Auth_State::saveState($state, self::STAGE_INIT);
         $consumer = new sspmod_oauth_Consumer($this->key, $this->secret);
         $authorizeUrl = $consumer->getAuthorizeRequest($urlAppend, $request);
@@ -165,9 +168,9 @@ class sspmod_authoidcoauth2_Auth_Source_OIDCOAuth2 extends SimpleSAML_Auth_Sourc
             $request['client_secret'] = $this->secret;
         }
         // Exchange the code we got earlier for an access token
-        $result = $this->doCurlRequest('/token', $this->isAuthInHeader, null, null, $request, 'POST');
+        $result = $this->doCurlRequest($this->tokenPath, $this->isAuthInHeader, null, null, $request, 'POST');
         // Use this access token to tell us about our current user + affiliations
-        $userInfo = $this->doCurlRequest('/userinfo', $this->isAuthInHeader, $result->access_token);
+        $userInfo = $this->doCurlRequest($this->userInfoPath, $this->isAuthInHeader, $result->access_token);
         foreach($userInfo as $key => $value){
             $state['Attributes'][$key] = array($value);
         }
